@@ -1,6 +1,7 @@
+import { secretKey } from "../../config.js";
 import { User } from "../schema/model.js";
 import bcrypt from "bcrypt";
-import secretKey from "../../config.js"
+import jwt from "jsonwebtoken";
 
 export const createUser = async (req, res) => {
   try {
@@ -11,9 +12,10 @@ export const createUser = async (req, res) => {
     }
     // check userName length is more than 2
     if (userName.length < 3) {
-      return res
-        .status(400)
-        .json({ message: "username length should be greater than 2" });
+      return res.status(400).json({
+        success: false,
+        message: "username length should be greater than 2",
+      });
     }
 
     // check userName already exist?
@@ -30,9 +32,10 @@ export const createUser = async (req, res) => {
 
     // check password's length
     if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password's must be greater than 6?" });
+      return res.status(400).json({
+        success: false,
+        message: "Password's must be greater than 6?",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -44,44 +47,100 @@ export const createUser = async (req, res) => {
       address: address,
     });
     await newUser.save();
-    return res.status(200).json({ message: "SignUp Successfully." });
+    return res.status(200).json({
+      success: true,
+      message: "SignUp Successfully.",
+    });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
 export const Signin = async (req, res) => {
   try {
-    const { userName, password } = req.body;
+    const { email, password } = req.body;
 
-    const existingUser = await User.findOne({ userName });
-    if (!existingUser) {
-      res.status(400).json({ message: "Invalid credentials" });
-    }
+    const user = await User.findOne({ email: email });
 
-    await bcrypt.compare(password, existingUser.password, (err, data) => {
-      if (data) {
-        const authclaims = [
-          { name: existingUser.userName },
-          { role: existingUser.role },
-        ];
-
-        const infoObj = {
-          _id: User._id,
+    if (user) {
+      let isValidPassword = await bcrypt.compare(password, user.password);
+      if (isValidPassword) {
+        let infoObj = {
+          _id: user._id,
         };
-        const expiresInfo = {
+        let expireInfo = {
           expiresIn: "30d",
         };
-        const token = await jwt.sign(infoObj, secretKey, expiresInfo)
+
+        let token = await jwt.sign(infoObj, secretKey, expireInfo);
+        console.log(token);
         res.status(200).json({
-          id: existingUser._id,
-          role: existingUser.role,
+          success: true,
+          message: "User SignIn Successfully.",
+          result: user,
           token: token,
         });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: "Invalid credentials.",
+        });
       }
-    });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Invalid credentials.",
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: "Internal Server error" });
   }
 };
 
+export const userDetail = async (req, res) => {
+  try {
+    const user = await User.findById(req._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User detail retrived Succesfully.",
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const updateDetail = async (req, res) => {
+  try {
+    const { id } = req._id;
+    const { address } = req.body;
+
+    const newAddress = await findByIdAndUpdate(id, { address: address });
+    res.status(200).json({
+      success: true,
+      message: "Address Update Successfully",
+      address: newAddress,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
