@@ -102,7 +102,9 @@ export const Signin = async (req, res) => {
 
 export const userDetail = async (req, res) => {
   try {
-    const user = await User.findById(req._id);
+    const id = req._id;
+
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({
@@ -127,14 +129,24 @@ export const userDetail = async (req, res) => {
 
 export const updateDetail = async (req, res) => {
   try {
-    const { id } = req._id;
+    const id = req._id;
     const { address } = req.body;
 
-    const newAddress = await findByIdAndUpdate(id, { address: address });
+    const updatedUser = await User.findByIdAndUpdate(
+      req._id,
+      { address },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
     res.status(200).json({
       success: true,
       message: "Address Update Successfully",
-      address: newAddress,
+      address: updatedUser.address,
     });
   } catch (error) {
     res.status(500).json({

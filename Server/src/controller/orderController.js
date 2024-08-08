@@ -1,0 +1,93 @@
+import { Order, User } from "../schema/model.js";
+
+export const placeOrder = async (req, res) => {
+  try {
+    const userId = req._id;
+    const order = req.body;
+
+    console.log("Received order:", order);
+    console.log("Type of order:", typeof order);
+    console.log("Is order an array?", Array.isArray(order));
+
+    if (!Array.isArray(order)) {
+      return res.status(400).json({
+        success: false,
+        message: "Order must be an array.",
+      });
+    }
+
+    for (const orderData of order) {
+      const newOrder = new Order({ user: userId, book: orderData._id });
+      const orderDataFromDb = await newOrder.save();
+
+      await User.findByIdAndUpdate(userId, {
+        $push: { orders: orderDataFromDb._id },
+      });
+
+      await User.findByIdAndUpdate(userId, { $pull: { cart: orderData._id } });
+    }
+    res.json({
+      status: true,
+      message: "Order placed successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getOrderHistory = async (req, res) => {
+  try {
+    const userId = req._id;
+    const user = await User.findById(userId).populate({
+      path: "Order",
+      populate: { path: "Book" },
+    });
+    const orderData = user.Order.reverse();
+    res.json({
+      status: true,
+      data: orderData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const user = await Order.find()
+      .populate({ path: "Book" })
+      .populate({ path: "User" })
+      .sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Order.findByIdAndUpdate(id, { status: req.body.status });
+    res.json({
+      success: true,
+      message: "Status Update Successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
