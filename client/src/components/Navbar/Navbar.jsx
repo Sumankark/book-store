@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { MdMenu } from "react-icons/md";
 
 const Navbar = () => {
+  const [mobileNav, setMobileNav] = useState(false);
+
   const links = [
     {
       title: "Home",
@@ -23,30 +27,88 @@ const Navbar = () => {
       link: "/profile",
     },
   ];
+
+  const toggleMovileNav = () => {
+    setMobileNav(!mobileNav);
+  };
+
   return (
-    <div className="flex bg-zinc-600 text-white px-8 py-2 items-center  justify-between">
-      <div className="flex items-center">
-        <img
-          className="h-10 me-4"
-          src="https://cdn-icons-png.flaticon.com/128/10433/10433049.png"
-          alt="logo"
-        />
-        <h1 className="text-2xl font-semibold">BookStore</h1>
-      </div>
-      <div className="nav-link-bookstore ">
-        <div className="flex gap-4">
-          {links.map((items, i) => (
-            <div
-              className="hover:text-blue-500 transition-all duration-300"
-              key={i}
+    <>
+      <nav className="z-50 relative flex bg-zinc-600 text-white px-8 py-2 items-center  justify-between">
+        <Link to="/" className="flex items-center">
+          <img
+            className="h-10 me-4"
+            src="https://cdn-icons-png.flaticon.com/128/10433/10433049.png"
+            alt="logo"
+          />
+          <h1 className="text-2xl font-semibold">BookStore</h1>
+        </Link>
+        <div className="nav-link-bookstore block md:flex items-center gap-4">
+          <div className="hidden md:flex gap-4">
+            {links.map((item, i) => (
+              <Link
+                to={item.link}
+                className="hover:text-blue-500 transition-all duration-300"
+                key={i}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+          <div className="hidden md:flex gap-4">
+            <Link
+              to="/login"
+              className="px-2 py-1 border border-blue-500 rounded hover:bg-white hover:text-zinc-600 transition-all duration-300"
             >
-              {items.title}
-            </div>
-          ))}
+              SignIn
+            </Link>
+            <Link
+              to="/signup"
+              className="px-2 py-1 bg-blue-500 rounded hover:bg-white hover:text-zinc-600 transition-all duration-300"
+            >
+              SignUp
+            </Link>
+          </div>
+          <button
+            aria-label="Toggle menu"
+            className="text-white text-2xl md:hidden hover:text-blue-200"
+            onClick={toggleMovileNav}
+          >
+            <MdMenu />
+          </button>
         </div>
-        <div></div>
+      </nav>
+      <div
+        className={`${
+          mobileNav ? "block" : "hidden"
+        } bg-zinc-400 h-screen absolute top-0 left-0 w-full z-40 flex flex-col items-center justify-center`}
+      >
+        {links.map((item, i) => (
+          <Link
+            to={item.link}
+            className="text-zinc-100 mb-8 text-2xl font-semibold hover:text-blue-500 transition-all duration-300"
+            key={i}
+            onClick={() => setMobileNav(false)}
+          >
+            {item.title}
+          </Link>
+        ))}
+        <Link
+          to="/login"
+          className="px-4 py-1 mb-8 text-2xl font-semibold border border-blue-500 rounded hover:bg-white text-zinc-100 hover:text-zinc-600 transition-all duration-300"
+          onClick={() => setMobileNav(false)}
+        >
+          SignIn
+        </Link>
+        <Link
+          to="/signup"
+          className="px-4 py-1 mb-8  text-2xl font-semibold bg-blue-500 rounded text-zinc-100 hover:bg-white hover:text-zinc-600 transition-all duration-300"
+          onClick={() => setMobileNav(false)}
+        >
+          SignUp
+        </Link>
       </div>
-    </div>
+    </>
   );
 };
 
