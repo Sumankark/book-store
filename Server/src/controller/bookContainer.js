@@ -125,7 +125,7 @@ export const readRecentAddBook = async (req, res) => {
 export const getBookDetail = async (req, res) => {
   try {
     const { bookId } = req.params;
-    console.log(bookId);
+
     const book = await Book.findById(bookId);
     res.status(200).json({
       success: true,

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { MdMenu } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [mobileNav, setMobileNav] = useState(false);
@@ -28,6 +29,11 @@ const Navbar = () => {
     },
   ];
 
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  if (isLoggedIn === false) {
+    links.splice(3, 2);
+  }
   const toggleMovileNav = () => {
     setMobileNav(!mobileNav);
   };

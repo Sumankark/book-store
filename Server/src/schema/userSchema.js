@@ -4,20 +4,20 @@ const userSchema = Schema(
   {
     userName: {
       type: String,
-      required: true,
+      required: [true, "UserName field is required"],
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email field is required"],
       unique: true,
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password field is required"],
     },
     address: {
       type: String,
-      required: true,
+      required: [true, "Address field is required"],
     },
     avatar: {
       type: String,
@@ -46,7 +46,13 @@ const userSchema = Schema(
         ref: "Order",
       },
     ],
+    isVerifiedEmail: {
+      type: String,
+      required: true,
+      default: false,
+    },
   },
+
   {
     timestamps: true,
   }

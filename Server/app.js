@@ -6,12 +6,14 @@ import bookRouter from "./src/router/bookRouter.js";
 import favouriteRouter from "./src/router/favouriteRouter.js";
 import cartRouter from "./src/router/cartRouter.js";
 import orderRouter from "./src/router/orderRouter.js";
+import cors from "cors";
 
 const expressApp = express();
 
 expressApp.listen(port, () => {
   console.log(`Express application is listening at port ${port}`);
 });
+expressApp.use(cors());
 expressApp.use(json());
 connectToMongoDB();
 

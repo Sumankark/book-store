@@ -4,27 +4,27 @@ const bookSchema = Schema(
   {
     url: {
       type: String,
-      required: true,
+      required: [true, "Url field is required"],
     },
     title: {
       type: String,
-      required: true,
+      required: [true, "Title field is required"],
     },
     author: {
       type: String,
-      required: true,
+      required: [true, "Author field is required"],
     },
     price: {
       type: Number,
-      required: true,
+      required: [true, "Price field is required"],
     },
     desc: {
       type: String,
-      required: true,
+      required: [true, "Description field is required"],
     },
     language: {
       type: String,
-      required: true,
+      required: [true, "Language field is required"],
     },
   },
   {
