@@ -99,20 +99,24 @@ const Navbar = () => {
             {item.title}
           </Link>
         ))}
-        <Link
-          to="/login"
-          className="px-4 py-1 mb-8 text-2xl font-semibold border border-blue-500 rounded hover:bg-white text-zinc-100 hover:text-zinc-600 transition-all duration-300"
-          onClick={() => setMobileNav(false)}
-        >
-          SignIn
-        </Link>
-        <Link
-          to="/signup"
-          className="px-4 py-1 mb-8  text-2xl font-semibold bg-blue-500 rounded text-zinc-100 hover:bg-white hover:text-zinc-600 transition-all duration-300"
-          onClick={() => setMobileNav(false)}
-        >
-          SignUp
-        </Link>
+        {isLoggedIn === false && (
+          <>
+            <Link
+              to="/login"
+              className="px-4 py-1 mb-8 text-2xl font-semibold border border-blue-500 rounded hover:bg-white text-zinc-100 hover:text-zinc-600 transition-all duration-300"
+              onClick={() => setMobileNav(false)}
+            >
+              SignIn
+            </Link>
+            <Link
+              to="/signup"
+              className="px-4 py-1 mb-8  text-2xl font-semibold bg-blue-500 rounded text-zinc-100 hover:bg-white hover:text-zinc-600 transition-all duration-300"
+              onClick={() => setMobileNav(false)}
+            >
+              SignUp
+            </Link>
+          </>
+        )}
       </div>
     </>
   );

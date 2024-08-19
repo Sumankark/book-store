@@ -9,7 +9,10 @@ export const createUser = async (req, res) => {
     const { userName, email, password, address } = req.body;
 
     if (!userName || !email || !password || !address) {
-      return res.status(400).json({ message: "All fields are required." });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required.",
+      });
     }
 
     // Check userName length
@@ -32,13 +35,19 @@ export const createUser = async (req, res) => {
     // Check if userName already exists
     const existingUserName = await User.findOne({ userName });
     if (existingUserName) {
-      return res.status(400).json({ message: "Username already exists." });
+      return res.status(400).json({
+        success: false,
+        message: "Username already exists.",
+      });
     }
 
     // Check if email already exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      return res.status(400).json({ message: "Email already exists." });
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists.",
+      });
     }
 
     // Check password length

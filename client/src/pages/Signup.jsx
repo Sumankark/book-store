@@ -1,20 +1,22 @@
 import React, { useState } from "react";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
+  const [data, setData] = useState({
     userName: "",
     email: "",
     password: "",
     address: "",
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setData({
+      ...data,
       [e.target.name]: e.target.value,
     });
   };
@@ -24,26 +26,52 @@ const Signup = () => {
     setError(null);
     setSuccess(null);
 
+    if (
+      data.userName === "" ||
+      data.email === "" ||
+      data.password === "" ||
+      data.address === ""
+    ) {
+      setError("All fields are required");
+      return;
+    }
+
     // Validate email domain
-    const emailDomain = formData.email.split("@")[1];
+    const emailDomain = data.email.split("@")[1];
     if (emailDomain !== "gmail.com") {
       setError("Only Gmail addresses are allowed.");
       return;
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/auth/signup",
-        formData
-      );
+      const response = await axios.post("http://localhost:8080/users", data);
+
+      setData({
+        userName: "",
+        email: "",
+        password: "",
+        address: "",
+      });
       if (response.data.success) {
-        setSuccess("Signup successful! You can now log in.");
+        setSuccess("Successfully Signup.Please check the mail to verify it.");
       } else {
         setError(response.data.message || "Something went wrong.");
       }
     } catch (error) {
-      setError("Signup failed. Please try again.");
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      } else {
+        setError("Signup failed. Please try again.");
+      }
     }
+  };
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -62,7 +90,7 @@ const Signup = () => {
             <input
               type="text"
               name="userName"
-              value={formData.userName}
+              value={data.userName}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1"
               required
@@ -73,7 +101,7 @@ const Signup = () => {
             <input
               type="email"
               name="email"
-              value={formData.email}
+              value={data.email}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1"
               required
@@ -81,21 +109,30 @@ const Signup = () => {
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
-              required
-            />
+            <div className="flex ">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={data.password}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded mt-1"
+                required
+              />
+              <button
+                className="p-3 border border-gray-300 rounded mt-1"
+                type="button"
+                onClick={handleTogglePassword}
+              >
+                {showPassword ? <IoMdEyeOff /> : <IoMdEye />}
+              </button>
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Address</label>
             <input
               type="text"
               name="address"
-              value={formData.address}
+              value={data.address}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded mt-1"
               required
@@ -108,6 +145,12 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
+        <div className="text-center m-4">
+          <p className="font-semibold m-2">Or</p>
+          <p>
+            Already have an account? <Link to={"/login"}>Login</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
