@@ -37,7 +37,6 @@ const Navbar = () => {
   const toggleMovileNav = () => {
     setMobileNav(!mobileNav);
   };
-
   return (
     <>
       <nav className="z-50 relative flex bg-zinc-600 text-white px-8 py-2 items-center  justify-between">
@@ -62,18 +61,24 @@ const Navbar = () => {
             ))}
           </div>
           <div className="hidden md:flex gap-4">
-            <Link
-              to="/login"
-              className="px-2 py-1 border border-blue-500 rounded hover:bg-white hover:text-zinc-600 transition-all duration-300"
-            >
-              SignIn
-            </Link>
-            <Link
-              to="/signup"
-              className="px-2 py-1 bg-blue-500 rounded hover:bg-white hover:text-zinc-600 transition-all duration-300"
-            >
-              SignUp
-            </Link>
+            {isLoggedIn === false ? (
+              <>
+                <Link
+                  to="/login"
+                  className="px-2 py-1 border border-blue-500 rounded hover:bg-white hover:text-zinc-600 transition-all duration-300"
+                >
+                  SignIn
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-2 py-1 bg-blue-500 rounded hover:bg-white hover:text-zinc-600 transition-all duration-300"
+                >
+                  SignUp
+                </Link>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
           <button
             aria-label="Toggle menu"
@@ -99,7 +104,8 @@ const Navbar = () => {
             {item.title}
           </Link>
         ))}
-        {isLoggedIn === false && (
+
+        {isLoggedIn === false ? (
           <>
             <Link
               to="/login"
@@ -116,6 +122,8 @@ const Navbar = () => {
               SignUp
             </Link>
           </>
+        ) : (
+          <></>
         )}
       </div>
     </>

@@ -51,7 +51,7 @@ const Login = () => {
       localStorage.setItem("role", response.data.result.role);
 
       global.setToken(token);
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       setError("Signup failed. Please try again.");
     }

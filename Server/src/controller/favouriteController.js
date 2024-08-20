@@ -19,7 +19,6 @@ export const addToFavourite = async (req, res) => {
         message: "Book is already in favourites",
       });
     }
-    console.log(bookId);
     await User.findByIdAndUpdate(userId, { $push: { favourites: bookId } });
     res.status(200).json({
       success: true,

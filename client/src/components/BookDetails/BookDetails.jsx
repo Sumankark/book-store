@@ -2,12 +2,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../Loader/Loading";
 import axios from "axios";
+import { FaEdit, FaHeart, FaShoppingCart } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { MdDelete } from "react-icons/md";
 
 const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const role = useSelector((state) => state.auth.role);
 
   const fetchBookDetails = useCallback(async () => {
     try {
@@ -32,7 +38,7 @@ const BookDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center my-8">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <Loading />
       </div>
     );
@@ -42,32 +48,100 @@ const BookDetails = () => {
     return <p className="text-center mt-4">No book details available.</p>;
   }
 
+  const handleFavourate = async () => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:8080/favourites/add-to-favourite/${id}`,
+        {},
+        {
+          headers: {
+            id: localStorage.getItem("id"),
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      alert(response.data.message);
+    } catch (error) {
+      console.error(
+        "Error adding to favourites:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  const handleCart = async () => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:8080/cart/add-to-cart/${id}`,
+        {},
+        {
+          headers: {
+            id: localStorage.getItem("id"),
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      alert(response.data.message);
+    } catch (error) {
+      console.error(
+        "Error adding to favourites:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   return (
-    <div className="px-4 py-8 bg-zinc-100 flex flex-col md:flex-row gap-8">
-      <div className="bg-zinc-200 rounded-lg p-4 w-full md:w-2/5 lg:w-1/2 flex items-center justify-center">
-        <img
-          src={book.url}
-          alt={`Cover of ${book.title}`}
-          className="h-auto max-h-[50vh] md:max-h-[70vh] max-w-full object-cover rounded-lg"
-        />
+    <div className=" mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+      <div className="px">
+        <div className="flex  rounded-lg items-center justify-center md:items-start bg-white shadow-lg gap-6 p-4 ">
+          <img
+            src={book.url}
+            alt={`Cover of ${book.title}`}
+            className="h-auto max-h-[60vh] object-cover rounded-lg mb-4"
+          />
+          {isLoggedIn === true && role === "user" && (
+            <div className="flex flex-col">
+              <button
+                className="bg-zinc-300 rounded-full text-3xl p-2 text-red-500"
+                onClick={handleFavourate}
+              >
+                <FaHeart />
+              </button>
+              <button
+                className="bg-zinc-300 rounded-full text-3xl p-2 mt-4 text-blue-500"
+                onClick={handleCart}
+              >
+                <FaShoppingCart />
+              </button>
+            </div>
+          )}
+          {isLoggedIn === true && role === "admin" && (
+            <div className="flex flex-col">
+              <button className="bg-zinc-300 rounded-full text-3xl p-2 text-black-500">
+                <FaEdit />
+              </button>
+              <button className="bg-zinc-300 rounded-full text-3xl p-2 mt-4 text-red-500">
+                <MdDelete />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="w-full md:w-3/5 lg:w-1/2 flex flex-col justify-between">
+      <div className="flex-1 flex flex-col justify-between bg-white shadow-lg rounded-lg p-6">
         <div>
-          <h1 className="text-3xl md:text-4xl text-zinc-800 font-semibold">
-            {book.title}
-          </h1>
-          <p className="text-sm mt-2">
+          <h1 className="text-4xl font-semibold text-gray-800">{book.title}</h1>
+          <p className="text-lg mt-2 text-gray-600">
             by{" "}
-            <span className="text-indigo-400 font-semibold">{book.author}</span>{" "}
+            <span className="text-indigo-500 font-semibold">{book.author}</span>{" "}
             (Author)
           </p>
-          <p className="text-2xl text-zinc-700 mt-4 font-semibold">
+          <p className="text-2xl font-bold text-gray-700 mt-4">
             Rs. {book.price}
           </p>
-          <p className="mt-4 text-slate-600 leading-relaxed">{book.desc}</p>
+          <p className="mt-4 text-gray-600 leading-relaxed">{book.desc}</p>
         </div>
-        <div className="mt-4">
-          <p className="text-sm text-zinc-600">
+        <div className="mt-4 text-sm text-gray-500">
+          <p>
             <span className="font-semibold">Language:</span> {book.language}
           </p>
         </div>
