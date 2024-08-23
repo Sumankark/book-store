@@ -43,7 +43,10 @@ const RecentlyAdded = () => {
       <div className="my-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {book &&
           book.map((item, i) => (
-            <div key={i}>
+            <div
+              key={i}
+              className="bg-zinc-600 shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
+            >
               <BookCard data={item} />
             </div>
           ))}

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [mobileNav, setMobileNav] = useState(false);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const links = [
     {
@@ -29,17 +30,16 @@ const Navbar = () => {
     },
   ];
 
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-
   if (isLoggedIn === false) {
     links.splice(3, 2);
   }
   const toggleMovileNav = () => {
     setMobileNav(!mobileNav);
   };
+
   return (
     <>
-      <nav className="z-50 relative flex bg-zinc-600 text-white px-8 py-2 items-center  justify-between">
+      <nav className="fixed top-0 left-0 w-full shadow-lg z-50 flex bg-zinc-600 text-white px-8 py-2 items-center justify-between">
         <Link to="/" className="flex items-center">
           <img
             className="h-10 me-4"

@@ -91,7 +91,7 @@ const BookDetails = () => {
   };
 
   return (
-    <div className=" mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+    <div className=" mx-auto px-4 py-8 flex flex-col md:flex-row gap-8 mt-12">
       <div className="px">
         <div className="flex  rounded-lg items-center justify-center md:items-start bg-white shadow-lg gap-6 p-4 ">
           <img
