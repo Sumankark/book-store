@@ -3,11 +3,7 @@ import { Order, User } from "../schema/model.js";
 export const placeOrder = async (req, res) => {
   try {
     const userId = req._id;
-    const order = req.body;
-
-    console.log("Received order:", order);
-    console.log("Type of order:", typeof order);
-    console.log("Is order an array?", Array.isArray(order));
+    const { order } = req.body;
 
     if (!Array.isArray(order)) {
       return res.status(400).json({
@@ -24,13 +20,17 @@ export const placeOrder = async (req, res) => {
         $push: { orders: orderDataFromDb._id },
       });
 
-      await User.findByIdAndUpdate(userId, { $pull: { cart: orderData._id } });
+      await User.findByIdAndUpdate(userId, {
+        $pull: { cart: orderData._id },
+      });
     }
+
     res.json({
-      status: true,
+      success: true,
       message: "Order placed successfully.",
     });
   } catch (error) {
+    console.error("Error placing order:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -41,11 +41,12 @@ export const placeOrder = async (req, res) => {
 export const getOrderHistory = async (req, res) => {
   try {
     const userId = req._id;
+
     const user = await User.findById(userId).populate({
-      path: "Order",
-      populate: { path: "Book" },
+      path: "orders",
+      populate: { path: "book" },
     });
-    const orderData = user.Order.reverse();
+    const orderData = user.orders.reverse();
     res.json({
       status: true,
       data: orderData,

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const Navbar = () => {
   const [mobileNav, setMobileNav] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-
+  const role = useSelector((state) => state.auth.role);
   const links = [
     {
       title: "Home",
@@ -28,10 +28,20 @@ const Navbar = () => {
       title: "Profile",
       link: "/profile",
     },
+    {
+      title: "Admin Profile",
+      link: "/profile",
+    },
   ];
 
   if (isLoggedIn === false) {
-    links.splice(3, 2);
+    links.splice(3, 3);
+  }
+  if (isLoggedIn == true && role == "user") {
+    links.splice(5, 1);
+  }
+  if (isLoggedIn == true && role == "admin") {
+    links.splice(4, 1);
   }
   const toggleMovileNav = () => {
     setMobileNav(!mobileNav);

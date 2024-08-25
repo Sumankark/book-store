@@ -8,9 +8,7 @@ import {
 
 const orderRouter = Router();
 orderRouter.route("/place-order").post(isAuthenticated, placeOrder);
-orderRouter
-  .route("/place-order-history")
-  .post(isAuthenticated, getOrderHistory);
+orderRouter.route("/get-order-history").get(isAuthenticated, getOrderHistory);
 orderRouter.route("/get-all-orders").get(isAuthenticated, getAllOrders);
 
 export default orderRouter;

@@ -36,6 +36,7 @@ const Favourites = () => {
   return (
     <div className="container mx-auto px-4 py-6 mt-10">
       <h1 className="text-3xl font-bold mb-6">Favourite Books</h1>
+
       {error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : (

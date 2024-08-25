@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "../Loader/Loading";
 import axios from "axios";
 import { FaEdit, FaHeart, FaShoppingCart } from "react-icons/fa";
@@ -8,9 +8,14 @@ import { MdDelete } from "react-icons/md";
 
 const BookDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const headers = {
+    id: localStorage.getItem("id"),
+    authorization: `Bearer ${localStorage.getItem("token")}`,
+  };
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const role = useSelector((state) => state.auth.role);
@@ -90,6 +95,17 @@ const BookDetails = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:8080/books/${id}`, {
+        headers,
+      });
+      alert(response.data.message);
+      navigate("/all-books");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
   return (
     <div className=" mx-auto px-4 py-8 flex flex-col md:flex-row gap-8 mt-12">
       <div className="px">
@@ -117,10 +133,16 @@ const BookDetails = () => {
           )}
           {isLoggedIn === true && role === "admin" && (
             <div className="flex flex-col">
-              <button className="bg-zinc-300 rounded-full text-3xl p-2 text-black-500">
+              <Link
+                to={`/update-book/${id}`}
+                className="bg-zinc-300 rounded-full text-3xl p-2 text-black-500"
+              >
                 <FaEdit />
-              </button>
-              <button className="bg-zinc-300 rounded-full text-3xl p-2 mt-4 text-red-500">
+              </Link>
+              <button
+                className="bg-zinc-300 rounded-full text-3xl p-2 mt-4 text-red-500"
+                onClick={handleDelete}
+              >
                 <MdDelete />
               </button>
             </div>
