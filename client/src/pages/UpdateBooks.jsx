@@ -1,7 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateBooks = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [data, setData] = useState({
     url: "",
     title: "",
@@ -21,8 +24,23 @@ const UpdateBooks = () => {
     setData({ ...data, [name]: value });
   };
 
+  const getBook = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/books/get-book-detail/${id}`
+      );
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching book details:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    getBook();
+  }, [id]);
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevents the default form submission behavior
+    e.preventDefault();
     try {
       if (
         data.url === "" ||
@@ -34,20 +52,14 @@ const UpdateBooks = () => {
       ) {
         alert("All fields are required");
       } else {
-        const response = await axios.post("http://localhost:8080/books", data, {
-          headers,
-        });
+        const response = await axios.patch(
+          `http://localhost:8080/books/${id}`,
+          data,
+          { headers }
+        );
         alert(response.data.message);
+        navigate(`/book-details/${id}`);
       }
-      // Reset form fields after submission
-      setData({
-        url: "",
-        title: "",
-        author: "",
-        price: "",
-        desc: "",
-        language: "",
-      });
     } catch (error) {
       alert(error.response?.data?.message || "An error occurred");
     }
@@ -93,7 +105,7 @@ const UpdateBooks = () => {
             required
           />
         </div>
-        <div className="flex space-x-4 ">
+        <div className="flex space-x-4">
           <div className="flex flex-col w-1/2">
             <label className="font-semibold mb-1">Language</label>
             <input

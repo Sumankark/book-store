@@ -41,7 +41,7 @@ const Navbar = () => {
     links.splice(5, 1);
   }
   if (isLoggedIn == true && role == "admin") {
-    links.splice(4, 1);
+    links.splice(3, 2);
   }
   const toggleMovileNav = () => {
     setMobileNav(!mobileNav);

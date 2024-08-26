@@ -39,7 +39,7 @@ const AddBook = () => {
         });
         alert(response.data.message);
       }
-      // Reset form fields after submission
+
       setData({
         url: "",
         title: "",

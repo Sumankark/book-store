@@ -108,9 +108,9 @@ const UserOrderHistory = () => {
                   <span className="font-semibold">Status:</span>
                   <span
                     className={`${
-                      item.status === "order placed"
+                      item.status === "Order Placed"
                         ? "text-green-500"
-                        : item.status === "canceled"
+                        : item.status === "Canceled"
                         ? "text-red-500"
                         : ""
                     } font-medium`}
@@ -147,9 +147,9 @@ const UserOrderHistory = () => {
               <div className="hidden md:block col-span-1 text-left lg:border-r-2 border-gray-200 pr-4">
                 <span
                   className={`${
-                    item.status === "order placed"
+                    item.status === "Order Placed"
                       ? "text-green-500"
-                      : item.status === "canceled"
+                      : item.status === "Canceled"
                       ? "text-red-500"
                       : ""
                   } font-medium`}

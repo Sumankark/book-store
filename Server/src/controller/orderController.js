@@ -62,8 +62,8 @@ export const getOrderHistory = async (req, res) => {
 export const getAllOrders = async (req, res) => {
   try {
     const user = await Order.find()
-      .populate({ path: "Book" })
-      .populate({ path: "User" })
+      .populate({ path: "book" })
+      .populate({ path: "user" })
       .sort({ createdAt: -1 });
     res.json({
       success: true,
@@ -80,15 +80,42 @@ export const getAllOrders = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    await Order.findByIdAndUpdate(id, { status: req.body.status });
+    const { status } = req.body;
+
+    const validStatuses = [
+      "Order Placed",
+      "Out for delivery",
+      "Delivered",
+      "Canceled",
+    ];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order status",
+      });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
     res.json({
       success: true,
-      message: "Status Update Successfully.",
+      message: "Status updated successfully",
+      data: updatedOrder,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Server error occurred",
     });
   }
 };
