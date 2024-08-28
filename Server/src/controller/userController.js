@@ -1,6 +1,6 @@
 import { secretKey } from "../../config.js";
 import { User } from "../schema/model.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../utils/sendemail.js";
 
