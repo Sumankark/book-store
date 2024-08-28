@@ -1,6 +1,6 @@
-import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
+import { hitApi } from "../../services/hitapi";
 
 const BookCard = ({ data, favourite }) => {
   const headers = {
@@ -11,8 +11,8 @@ const BookCard = ({ data, favourite }) => {
 
   const handleRemoveBook = async () => {
     try {
-      const response = await axios.patch(
-        `http://localhost:8080/favourites/remove-from-favourite/${data._id}`,
+      const response = await hitApi.patch(
+        `/favourites/remove-from-favourite/${data._id}`,
         {},
         { headers }
       );

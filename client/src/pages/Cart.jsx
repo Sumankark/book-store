@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../components/Loader/Loading";
-import axios from "axios";
 import { MdDelete } from "react-icons/md";
 import { MdRemoveShoppingCart } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { hitApi } from "../services/hitapi";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -18,10 +18,7 @@ const Cart = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/cart/get-user-cart`,
-          { headers }
-        );
+        const response = await hitApi.get(`/cart/get-user-cart`, { headers });
         setCart(response.data.data);
 
         const totalPrice = response.data.data.reduce(
@@ -53,8 +50,8 @@ const Cart = () => {
     setTotal(updatedTotal);
 
     try {
-      const response = await axios.patch(
-        `http://localhost:8080/cart/remove-from-cart/${bookId}`,
+      const response = await hitApi.patch(
+        `/cart/remove-from-cart/${bookId}`,
         {},
         { headers }
       );
@@ -66,8 +63,8 @@ const Cart = () => {
 
   const handleOrder = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8080/orders/place-order`,
+      const response = await hitApi.post(
+        `/orders/place-order`,
         { order: cart },
         { headers }
       );

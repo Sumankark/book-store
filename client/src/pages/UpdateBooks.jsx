@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { hitApi } from "../services/hitapi";
 
 const UpdateBooks = () => {
   const { id } = useParams();
@@ -26,9 +26,7 @@ const UpdateBooks = () => {
 
   const getBook = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/books/get-book-detail/${id}`
-      );
+      const response = await hitApi.get(`/books/get-book-detail/${id}`);
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching book details:", error.message);
@@ -52,11 +50,7 @@ const UpdateBooks = () => {
       ) {
         alert("All fields are required");
       } else {
-        const response = await axios.patch(
-          `http://localhost:8080/books/${id}`,
-          data,
-          { headers }
-        );
+        const response = await hitApi.patch(`/books/${id}`, data, { headers });
         alert(response.data.message);
         navigate(`/book-details/${id}`);
       }

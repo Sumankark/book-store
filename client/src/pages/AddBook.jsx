@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useState } from "react";
+import { hitApi } from "../services/hitapi";
 
 const AddBook = () => {
   const [data, setData] = useState({
@@ -34,7 +34,7 @@ const AddBook = () => {
       ) {
         alert("All fields are required");
       } else {
-        const response = await axios.post("http://localhost:8080/books", data, {
+        const response = await hitApi.post("/books", data, {
           headers,
         });
         alert(response.data.message);

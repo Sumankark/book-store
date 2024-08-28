@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import BookCard from "../BookCard/BookCard";
 import Loading from "../Loader/Loading";
+import { hitApi } from "../../services/hitapi";
 
 const RecentlyAdded = () => {
   const [book, setBook] = useState([]);
@@ -10,9 +10,7 @@ const RecentlyAdded = () => {
 
   const recentAddedBook = async () => {
     try {
-      const result = await axios.get(
-        `http://localhost:8080/books/get-recent-add-books`
-      );
+      const result = await hitApi.get(`/books/get-recent-add-books`);
       setBook(result.data.data);
       setLoading(false);
     } catch (error) {

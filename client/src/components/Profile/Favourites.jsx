@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState, useMemo } from "react";
 import BookCard from "../BookCard/BookCard";
+import { hitApi } from "../../services/hitapi";
 
 const Favourites = () => {
   const [favouriteBooks, setFavouriteBooks] = useState([]);
@@ -19,10 +19,9 @@ const Favourites = () => {
   useEffect(() => {
     const fetchFavouriteBooks = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/favourites/get-favourite-books",
-          { headers }
-        );
+        const response = await hitApi.get("/favourites/get-favourite-books", {
+          headers,
+        });
         setFavouriteBooks(response.data.data);
       } catch (error) {
         setError("Error fetching favourite books. Please try again later.");

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Profile/Sidebar";
 import { Outlet } from "react-router-dom";
-import axios from "axios";
 import Loading from "../components/Loader/Loading";
 import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
+import { hitApi } from "../services/hitapi";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -19,10 +19,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/users/user-detail",
-          { headers }
-        );
+        const response = await hitApi.get("/users/user-detail", { headers });
         setProfile(response.data.data);
       } catch (error) {
         console.error("Error fetching profile details:", error);

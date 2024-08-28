@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState, useMemo } from "react";
 import Loading from "../Loader/Loading";
 import { Link } from "react-router-dom";
+import { hitApi } from "../../services/hitapi";
 
 const UserOrderHistory = () => {
   const [orderHistory, setOrderHistory] = useState(null);
@@ -20,10 +20,9 @@ const UserOrderHistory = () => {
   useEffect(() => {
     const fetchOrderHistory = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/orders/get-order-history",
-          { headers }
-        );
+        const response = await hitApi.get("/orders/get-order-history", {
+          headers,
+        });
         setOrderHistory(response.data.data);
       } catch (error) {
         setError("Error fetching order history. Please try again later.");

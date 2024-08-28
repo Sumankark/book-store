@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../components/Loader/Loading";
 import BookCard from "../components/BookCard/BookCard";
-import axios from "axios";
+import { hitApi } from "../services/hitapi";
 
 const AllBooks = () => {
   const [book, setBook] = useState([]);
@@ -10,9 +10,7 @@ const AllBooks = () => {
 
   const fetchAllBooks = async () => {
     try {
-      const result = await axios.get(
-        `http://localhost:8080/books/read-all-books`
-      );
+      const result = await hitApi.get(`/books/read-all-books`);
       setBook(result.data.data);
       setLoading(false);
     } catch (error) {

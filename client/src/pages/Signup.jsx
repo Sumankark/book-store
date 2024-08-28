@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { hitApi } from "../services/hitapi";
 
 const Signup = () => {
   const [data, setData] = useState({
@@ -44,7 +44,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/users", data);
+      const response = await hitApi.post("/users", data);
 
       setData({
         userName: "",

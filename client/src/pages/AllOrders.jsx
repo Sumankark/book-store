@@ -1,10 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Loading from "../components/Loader/Loading";
 import { FaUserLarge, FaCheck } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { IoOpenOutline } from "react-icons/io5";
 import UserDataInfo from "./UserDataInfo";
+import { hitApi } from "../services/hitapi";
 
 const AllOrders = () => {
   const [options, setOptions] = useState(null);
@@ -23,10 +23,9 @@ const AllOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/orders/get-all-orders",
-          { headers }
-        );
+        const response = await hitApi.get("/orders/get-all-orders", {
+          headers,
+        });
         setAllOrders(response.data.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -46,17 +45,16 @@ const AllOrders = () => {
   const submitChanges = async (i) => {
     const id = allOrders[i]._id;
     try {
-      const response = await axios.patch(
-        `http://localhost:8080/orders/update-status/${id}`,
+      const response = await hitApi.patch(
+        `/orders/update-status/${id}`,
         { status },
         { headers }
       );
       alert(response.data.message);
       // Re-fetch orders after status update
-      const updatedOrders = await axios.get(
-        "http://localhost:8080/orders/get-all-orders",
-        { headers }
-      );
+      const updatedOrders = await hitApi.get("/orders/get-all-orders", {
+        headers,
+      });
       setAllOrders(updatedOrders.data.data);
     } catch (error) {
       console.error("Error updating order status:", error);

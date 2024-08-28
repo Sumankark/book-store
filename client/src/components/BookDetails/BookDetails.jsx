@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "../Loader/Loading";
-import axios from "axios";
 import { FaEdit, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useSelector } from "react-redux";
+import { hitApi } from "../../services/hitapi";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -24,9 +24,7 @@ const BookDetails = () => {
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
-        const result = await axios.get(
-          `http://localhost:8080/books/get-book-detail/${id}`
-        );
+        const result = await hitApi.get(`/books/get-book-detail/${id}`);
         setBook(result.data.data);
         setLoading(false);
       } catch (error) {
@@ -55,8 +53,8 @@ const BookDetails = () => {
 
   const handleFavourate = async () => {
     try {
-      const response = await axios.patch(
-        `http://localhost:8080/favourites/add-to-favourite/${id}`,
+      const response = await hitApi.patch(
+        `/favourites/add-to-favourite/${id}`,
         {},
         { headers }
       );
@@ -68,8 +66,8 @@ const BookDetails = () => {
 
   const handleCart = async () => {
     try {
-      const response = await axios.patch(
-        `http://localhost:8080/cart/add-to-cart/${id}`,
+      const response = await hitApi.patch(
+        `/cart/add-to-cart/${id}`,
         {},
         { headers }
       );
@@ -81,7 +79,7 @@ const BookDetails = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://localhost:8080/books/${id}`, {
+      const response = await hitApi.delete(`/books/${id}`, {
         headers,
       });
       alert(response.data.message);

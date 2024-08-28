@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { hitApi } from "../services/hitapi";
 
 const VerifyUser = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const VerifyUser = () => {
 
   let userVerify = async () => {
     try {
-      let result = await axios({
+      let result = await hitApi({
         url: "http://localhost:8080/users/verify-user",
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },

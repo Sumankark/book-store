@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState, useMemo } from "react";
 import Loading from "../Loader/Loading";
+import { hitApi } from "../../services/hitapi";
 
 const Settings = () => {
   const [value, setValue] = useState({ address: "" });
@@ -20,10 +20,7 @@ const Settings = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/users/user-detail",
-          { headers }
-        );
+        const response = await hitApi.get("/users/user-detail", { headers });
         setProfileData(response.data.data);
         setValue({ address: response.data.data.address });
       } catch (error) {
@@ -42,11 +39,9 @@ const Settings = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.patch(
-        "http://localhost:8080/users/update-address",
-        value,
-        { headers }
-      );
+      const response = await hitApi.patch("/users/update-address", value, {
+        headers,
+      });
       alert(response.data.message);
     } catch (error) {
       setError("Error updating address. Please try again later.");

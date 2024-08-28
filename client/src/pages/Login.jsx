@@ -2,10 +2,10 @@ import React, { useContext, useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { GlobalVariableContext } from "../App";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
+import { hitApi } from "../services/hitapi";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,10 +39,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/users/signin",
-        data
-      );
+      const response = await hitApi.post("/users/signin", data);
       let token = response.data.token;
       dispatch(authActions.login());
       dispatch(authActions.changeRole(response.data.result.role));
