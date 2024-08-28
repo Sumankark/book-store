@@ -9,7 +9,7 @@ import UserDataInfo from "./UserDataInfo";
 const AllOrders = () => {
   const [options, setOptions] = useState(null);
   const [allOrders, setAllOrders] = useState([]);
-  const [values, setValues] = useState({ status: "" });
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userDiv, setUserDiv] = useState("hidden");
@@ -20,29 +20,27 @@ const AllOrders = () => {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
   };
 
-  // Moved fetchOrders function outside of useEffect
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8080/orders/get-all-orders",
-        { headers }
-      );
-      setAllOrders(response.data.data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      setError("Failed to fetch orders. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchOrders(); // Fetch orders when the component mounts
-  }, []);
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/orders/get-all-orders",
+          { headers }
+        );
+        setAllOrders(response.data.data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setError("Failed to fetch orders. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [headers]);
 
   const handleChange = (e) => {
-    const { value } = e.target;
-    setValues({ status: value });
+    setStatus(e.target.value);
   };
 
   const submitChanges = async (i) => {
@@ -50,13 +48,16 @@ const AllOrders = () => {
     try {
       const response = await axios.patch(
         `http://localhost:8080/orders/update-status/${id}`,
-        { status: values.status },
+        { status },
         { headers }
       );
       alert(response.data.message);
-
       // Re-fetch orders after status update
-      fetchOrders();
+      const updatedOrders = await axios.get(
+        "http://localhost:8080/orders/get-all-orders",
+        { headers }
+      );
+      setAllOrders(updatedOrders.data.data);
     } catch (error) {
       console.error("Error updating order status:", error);
     }
@@ -73,7 +74,7 @@ const AllOrders = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p>{error}</p>
+        <p className="text-red-500">{error}</p>
       </div>
     );
   }
@@ -132,8 +133,8 @@ const AllOrders = () => {
                     <select
                       name="status"
                       className="border border-gray-300 rounded px-2 py-1"
-                      onChange={(e) => handleChange(e, i)}
-                      value={values.status}
+                      onChange={handleChange}
+                      value={status}
                     >
                       {[
                         "Order Placed",
@@ -222,8 +223,8 @@ const AllOrders = () => {
                         <select
                           name="status"
                           className="border border-gray-300 rounded px-2 py-1"
-                          onChange={(e) => handleChange(e, i)}
-                          value={values.status}
+                          onChange={handleChange}
+                          value={status}
                         >
                           {[
                             "Order Placed",

@@ -1,18 +1,23 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import BookCard from "../BookCard/BookCard";
 
 const Favourites = () => {
   const [favouriteBooks, setFavouriteBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const headers = {
-    id: localStorage.getItem("id"),
-    authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
+
+  // Memoize headers to avoid unnecessary re-renders
+  const headers = useMemo(
+    () => ({
+      id: localStorage.getItem("id"),
+      authorization: `Bearer ${localStorage.getItem("token")}`,
+    }),
+    []
+  );
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchFavouriteBooks = async () => {
       try {
         const response = await axios.get(
           "http://localhost:8080/favourites/get-favourite-books",
@@ -20,14 +25,15 @@ const Favourites = () => {
         );
         setFavouriteBooks(response.data.data);
       } catch (error) {
-        setError("Error fetching favourite books.");
+        setError("Error fetching favourite books. Please try again later.");
         console.error("Error fetching favourite books:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetch();
-  }, [favouriteBooks]); // Empty dependency array to avoid infinite loop
+
+    fetchFavouriteBooks();
+  }, [headers]); // Add headers to the dependency array if needed
 
   if (loading) {
     return <div className="text-center">Loading...</div>;

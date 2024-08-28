@@ -1,16 +1,21 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Loading from "../Loader/Loading";
 import { Link } from "react-router-dom";
 
 const UserOrderHistory = () => {
   const [orderHistory, setOrderHistory] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const headers = {
-    id: localStorage.getItem("id"),
-    authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
+  // Memoize headers
+  const headers = useMemo(
+    () => ({
+      id: localStorage.getItem("id"),
+      authorization: `Bearer ${localStorage.getItem("token")}`,
+    }),
+    []
+  );
 
   useEffect(() => {
     const fetchOrderHistory = async () => {
@@ -23,23 +28,25 @@ const UserOrderHistory = () => {
       } catch (error) {
         setError("Error fetching order history. Please try again later.");
         console.error("Error fetching order history:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchOrderHistory();
-  }, []);
+  }, [headers]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loading />
+      </div>
+    );
+  }
 
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
-  if (!orderHistory) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loading />
       </div>
     );
   }

@@ -1,17 +1,24 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Loading from "../Loader/Loading";
 
 const Settings = () => {
   const [value, setValue] = useState({ address: "" });
-  const [profileData, setProfileData] = useState();
-  const headers = {
-    id: localStorage.getItem("id"),
-    authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Memoize headers
+  const headers = useMemo(
+    () => ({
+      id: localStorage.getItem("id"),
+      authorization: `Bearer ${localStorage.getItem("token")}`,
+    }),
+    []
+  );
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchProfileData = async () => {
       try {
         const response = await axios.get(
           "http://localhost:8080/users/user-detail",
@@ -20,15 +27,19 @@ const Settings = () => {
         setProfileData(response.data.data);
         setValue({ address: response.data.data.address });
       } catch (error) {
+        setError("Error fetching profile data. Please try again later.");
         console.error("Error fetching profile data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetch();
-  }, []);
+    fetchProfileData();
+  }, [headers]);
 
   const handleChange = (e) => {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
+
   const handleUpdate = async () => {
     try {
       const response = await axios.patch(
@@ -38,16 +49,22 @@ const Settings = () => {
       );
       alert(response.data.message);
     } catch (error) {
-      alert(error);
+      setError("Error updating address. Please try again later.");
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen p-6 bg-gray-100">
-      {!profileData ? (
-        <div className="flex items-center justify-center h-full">
-          <Loading />
-        </div>
+      {error ? (
+        <div className="text-center text-red-500 mb-6">{error}</div>
       ) : (
         <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
           <h1 className="text-3xl font-bold mb-6">Settings</h1>

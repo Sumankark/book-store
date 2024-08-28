@@ -37,10 +37,10 @@ const Navbar = () => {
   if (isLoggedIn === false) {
     links.splice(3, 3);
   }
-  if (isLoggedIn == true && role == "user") {
+  if (isLoggedIn === true && role === "user") {
     links.splice(5, 1);
   }
-  if (isLoggedIn == true && role == "admin") {
+  if (isLoggedIn === true && role === "admin") {
     links.splice(3, 2);
   }
   const toggleMovileNav = () => {
